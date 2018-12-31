@@ -8,7 +8,7 @@
 - Download desired Maps: [SC2 Maps](https://github.com/Blizzard/s2client-proto#map-packs) and mobe the contents to `sc2ai/StarCraftII/Maps`
 - Fire up the container `docker-compose up && winpty docker-compose run sc2 bash`
 
-__Attention__ With MinGW64 on Windows, use `docker-compose up && winpty docker-compose run sc2 bash` (prefixed with `winpty` for an interactive shell)
+__Attention__ With MinGW64 on Windows, use `docker-compose up && docker-compose run sc2 bash` (prefixed with `winpty` for an interactive shell)
 
 ### Usage (within the container)
 - Create a Custom Agent (or clone [https://github.com/primus852/SC2-AI-Reinforced](https://github.com/primus852/SC2-AI-Reinforced) to begin with)
