@@ -7,6 +7,7 @@
 - Move contents to `/sc2ai` (so the path is `/sc2ai/StarCraftII`
 - Download desired Maps: [SC2 Maps](https://github.com/Blizzard/s2client-proto#map-packs) and mobe the contents to `sc2ai/StarCraftII/Maps`
 - Fire up the container `docker-compose up --build && winpty docker-compose run sc2 bash`
+
 __Attention__ With MinGW64 on Windows, use `docker-compose up --build && winpty docker-compose run sc2 bash` (prefixed with `winpty` for an interactive shell)
 
 ### Usage (within the container)
