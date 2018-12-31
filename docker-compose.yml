@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+    sc2:
+      build: .
+      ports:
+        - 127.0.0.1:80:80
+      restart: always
+      networks:
+        - default
+      volumes:
+        - ./sc2ai:/sc2ai
+networks:
+    default:
