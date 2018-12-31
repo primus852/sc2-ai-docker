@@ -10,9 +10,9 @@ RUN apt-get update && apt-get install -yq \
     curl \
     # Install git
     git \
-	# Install Python
-	python3-minimal \
-	python3-pip \
+    # Install Python
+    python3-minimal \
+    python3-pip \
     # Install tools
     nano \
     wget \
@@ -28,6 +28,7 @@ RUN pip3 install pandas
 RUN pip3 install numpy
 RUN pip3 install Pillow
 RUN pip3 install matplotlib
+RUN pip3 install peewee
 
 # Install PySC2 https://github.com/deepmind/pysc2
 RUN pip3 install pysc2
