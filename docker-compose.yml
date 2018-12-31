@@ -10,18 +10,5 @@ services:
         - default
       volumes:
         - ./sc2ai:/sc2ai
-    mysql:
-      image: mysql:5.7
-      environment:
-        MYSQL_DATABASE: project
-        MYSQL_USER: admin
-        MYSQL_PASSWORD: ABcd1234
-        MYSQL_ROOT_PASSWORD: docker
-      ports:
-        - 127.0.0.1:3306:3306
-      networks:
-        - default
-      volumes:
-        - ./mysql:/var/lib/mysql
 networks:
     default:
