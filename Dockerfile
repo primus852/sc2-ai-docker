@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -yq \
     curl \
     # Install git
     git \
-	apache2 \
+    apache2 \
     # Install php 7.2
     libapache2-mod-php7.2 \
     php7.2-cli \
@@ -29,7 +29,7 @@ RUN apt-get update && apt-get install -yq \
     nano \
     wget \
     unzip \
-	nodejs \
+    nodejs \
     npm \
     locales \
     && apt-get clean && apt-get autoremove -yq
@@ -41,6 +41,8 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN locale-gen en_US.UTF-8 en_GB.UTF-8 de_DE.UTF-8 es_ES.UTF-8 fr_FR.UTF-8 it_IT.UTF-8 km_KH sv_SE.UTF-8 fi_FI.UTF-8
 
 # Apache Settings
+RUN a2enmod rewrite expires
+
 # Update the PHP.ini file, enable <? ?> tags and quieten logging.
 RUN sed -i "s/short_open_tag = Off/short_open_tag = On/" /etc/php/7.2/apache2/php.ini
 RUN sed -i "s/error_reporting = .*$/error_reporting = E_ERROR | E_WARNING | E_PARSE/" /etc/php/7.2/apache2/php.ini
