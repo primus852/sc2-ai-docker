@@ -71,5 +71,4 @@ RUN pip3 install pysc2
 WORKDIR /sc2ai
 
 # Run Apache
-RUN chown -R www-data:www-data /sc2ai/dashboard/var
 CMD apachectl -D FOREGROUND
