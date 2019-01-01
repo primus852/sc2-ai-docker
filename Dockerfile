@@ -67,3 +67,5 @@ RUN pip3 install peewee
 RUN pip3 install pysc2
 
 WORKDIR /sc2ai
+
+CMD ["apache2ctl", "-D", "FOREGROUND"]
