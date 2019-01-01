@@ -70,4 +70,6 @@ RUN pip3 install pysc2
 
 WORKDIR /sc2ai
 
-CMD ["apache2ctl", "-D", "FOREGROUND"]
+RUN mkdir /etc/service/apache
+ADD apache.sh /etc/service/apache/run
+RUN chmod +x /etc/service/apache/run
