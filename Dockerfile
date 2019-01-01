@@ -70,6 +70,6 @@ RUN pip3 install pysc2
 
 WORKDIR /sc2ai
 
-RUN mkdir /etc/service/apache
-ADD apache.sh /etc/service/apache/run
-RUN chmod +x /etc/service/apache/run
+# Run Apache
+RUN chown -R www-data:www-data /sc2ai/dashboard/var
+CMD apachectl -D FOREGROUND
