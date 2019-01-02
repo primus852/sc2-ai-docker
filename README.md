@@ -10,6 +10,11 @@
 
 __Attention__ With MinGW64 on Windows, use `docker-compose up -d && winpty docker-compose run sc2 bash` (prefixed with `winpty` for an interactive shell)
 
+### Usage (within the container)
+- Create a Custom Agent (or clone [https://github.com/primus852/SC2-AI-Reinforced](https://github.com/primus852/SC2-AI-Reinforced) to begin with)
+- go to folder of custom client
+- Start the Agent `python3 -m pysc2.bin.agent --map Simple64 --agent refined.DeepAgent --agent_race terran --norender --parallel 2`
+
 ### Dashboard
 #### Install Symfony Project
 - go to `dashboard` folder `cd /sc2ai/dashboard`
@@ -20,8 +25,3 @@ __Attention__ With MinGW64 on Windows, use `docker-compose up -d && winpty docke
 - Install dependencies: `npm install`
 #### View in Browser
 - Navigate to http://localhost:4620 to see your stats
-
-### Usage (within the container)
-- Create a Custom Agent (or clone [https://github.com/primus852/SC2-AI-Reinforced](https://github.com/primus852/SC2-AI-Reinforced) to begin with)
-- go to folder of custom client
-- Start the Agent `python3 -m pysc2.bin.agent --map Simple64 --agent refined.DeepAgent --agent_race terran --norender --parallel 2`
