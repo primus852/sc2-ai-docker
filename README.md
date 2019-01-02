@@ -10,6 +10,17 @@
 
 __Attention__ With MinGW64 on Windows, use `docker-compose up -d && winpty docker-compose run sc2 bash` (prefixed with `winpty` for an interactive shell)
 
+### Dashboard
+#### Install Symfony Project
+- go to `dashboard` folder `cd /sc2ai/dashboard`
+- Install dependencies: `composer install`
+- Edit `.env` with the DB Settings: `sqlite:////%kernel.project_dir%/../../sc2ai/SC2-AI-Reinforced/db/stats.db` (or any other db)
+#### Install NPM Dependencies
+- go to `public` folder `cd /sc2ai/dashboard/public`
+- Install dependencies: `npm install`
+#### View in Browser
+- Navigate to http://localhost:4620 to see your stats
+
 ### Usage (within the container)
 - Create a Custom Agent (or clone [https://github.com/primus852/SC2-AI-Reinforced](https://github.com/primus852/SC2-AI-Reinforced) to begin with)
 - go to folder of custom client
