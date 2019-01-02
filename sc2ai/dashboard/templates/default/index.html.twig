@@ -1,0 +1,216 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello {{ controller_name }}!{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <br>
+        <h2>SC2 - AI Custom Agent</h2>
+        <h4>
+            <span class="badge badge-{{ last_seen.status_class }}">{{ last_seen.status }}</span> (last
+            seen {{ last_seen.last|time_diff }})
+        </h4>
+        <br>
+        <div class="row">
+            <div class="col-md-12">
+                <h3>Total {{ episodes }} Episodes</h3>
+            </div>
+        </div>
+        <div class="row stats_panel" id="totals">
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card rounded">
+                            <div class="card-image">
+                                <span class="card-notify-year">Win</span>
+                            </div>
+                            <div class="card-body text-center">
+                                <div class="ad-title m-auto">
+                                    <h2>{{ total.win }}&percnt;</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card rounded">
+                            <div class="card-image">
+                                <span class="card-notify-year">Loss</span>
+                            </div>
+                            <div class="card-body text-center">
+                                <div class="ad-title m-auto">
+                                    <h2>{{ total.loss }}&percnt;</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card rounded">
+                            <div class="card-image">
+                                <span class="card-notify-year">Draw</span>
+                            </div>
+                            <div class="card-body text-center">
+                                <div class="ad-title m-auto">
+                                    <h2>{{ total.draw }}&percnt;</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div id="chart_total"></div>
+            </div>
+        </div>
+        <br/>
+        <hr/>
+        <br/>
+        <div class="row">
+            <div class="col-md-12">
+                <h3>Last 100 Episodes</h3>
+            </div>
+        </div>
+        <div class="row stats_panel" id="lasts">
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card rounded">
+                            <div class="card-image">
+                                <span class="card-notify-year">Win</span>
+                            </div>
+                            <div class="card-body text-center">
+                                <div class="ad-title m-auto">
+                                    <h2>{{ last.win }}&percnt;</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card rounded">
+                            <div class="card-image">
+                                <span class="card-notify-year">Loss</span>
+                            </div>
+                            <div class="card-body text-center">
+                                <div class="ad-title m-auto">
+                                    <h2>{{ last.loss }}&percnt;</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card rounded">
+                            <div class="card-image">
+                                <span class="card-notify-year">Draw</span>
+                            </div>
+                            <div class="card-body text-center">
+                                <div class="ad-title m-auto">
+                                    <h2>{{ last.draw }}&percnt;</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div id="chart_last"></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    <script>
+        $(document).ready(function () {
+
+            Highcharts.chart('chart_total', {
+                chart: {
+                    height: 200,
+                    type: 'spline'
+                },
+                title: false,
+
+                subtitle: false,
+                yAxis: {
+                    ceiling: 100,
+                    title: {
+                        text: 'Percent'
+                    }
+                },
+                series: [
+                    {
+                        name: 'Win',
+                        data: [{{ chart_total.win }}]
+                    },
+                    {
+                        name: 'Loss',
+                        data: [{{ chart_total.loss }}]
+                    },
+                    {
+                        name: 'Draw',
+                        data: [{{ chart_total.draw }}]
+                    },
+                ],
+                responsive: {
+                    rules: [{
+                        condition: {
+                            maxWidth: 500
+                        },
+                        chartOptions: {
+                            legend: {
+                                layout: 'horizontal',
+                                align: 'center',
+                                verticalAlign: 'bottom'
+                            }
+                        }
+                    }]
+                }
+
+            });
+
+            Highcharts.chart('chart_last', {
+                chart: {
+                    height: 200,
+                    type: 'spline'
+                },
+                title: false,
+
+                subtitle: false,
+                yAxis: {
+                    ceiling: 100,
+                    title: {
+                        text: 'Percent'
+                    }
+                },
+                series: [
+                    {
+                        name: 'Win',
+                        data: [{{ chart_last.win }}]
+                    },
+                    {
+                        name: 'Loss',
+                        data: [{{ chart_last.loss }}]
+                    },
+                    {
+                        name: 'Draw',
+                        data: [{{ chart_last.draw }}]
+                    },
+                ],
+                responsive: {
+                    rules: [{
+                        condition: {
+                            maxWidth: 500
+                        },
+                        chartOptions: {
+                            legend: {
+                                layout: 'horizontal',
+                                align: 'center',
+                                verticalAlign: 'bottom'
+                            }
+                        }
+                    }]
+                }
+
+            });
+
+        });
+
+    </script>
+{% endblock javascripts %}

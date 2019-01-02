@@ -1,0 +1,30 @@
+{
+  "name": "sc2ai-dashboard",
+  "version": "1.0.0",
+  "description": "Visualization for SC2 AI Agent",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/primus852/sc2-ai-docker.git"
+  },
+  "keywords": [
+    "Docker",
+    "SC2AI",
+    "Dashboard"
+  ],
+  "author": "Torsten Wolter <tow.berlin@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/primus852/sc2-ai-docker/issues"
+  },
+  "homepage": "https://github.com/primus852/sc2-ai-docker#readme",
+  "dependencies": {
+    "bootstrap": "^4.2.1",
+    "highcharts": "^7.0.1",
+    "jquery": "^3.3.1",
+    "popper.js": "^1.14.6"
+  }
+}
