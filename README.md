@@ -5,7 +5,7 @@
 - go to folder `cd sc2-ai-docker`
 - Download latest StarCraft 2 linux Client: [SC2 Linux](https://github.com/Blizzard/s2client-proto#linux-packages)
 - Move contents to `/sc2ai` (so the path is `/sc2ai/StarCraftII`)
-- Download desired Maps: [SC2 Maps](https://github.com/Blizzard/s2client-proto#map-packs) and mobe the contents to `sc2ai/StarCraftII/Maps`
+- Download desired Maps: [SC2 Maps](https://github.com/Blizzard/s2client-proto#map-packs) and move the contents to `sc2ai/StarCraftII/Maps`
 - Fire up the container `docker-compose up -d && docker-compose run sc2 bash`
 
 __Attention__ With MinGW64 on Windows, use `docker-compose up -d && winpty docker-compose run sc2 bash` (prefixed with `winpty` for an interactive shell)
@@ -24,4 +24,4 @@ __Attention__ With MinGW64 on Windows, use `docker-compose up -d && winpty docke
 - go to `public` folder `cd /sc2ai/dashboard/public`
 - Install dependencies: `npm install`
 #### View in Browser
-- Navigate to http://localhost:4620 to see your stats
+- Navigate to http://<ip-of-host>:4620 to see your stats
