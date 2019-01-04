@@ -24,4 +24,4 @@ __Attention__ With MinGW64 on Windows, use `docker-compose up -d && winpty docke
 - go to `public` folder `cd /sc2ai/dashboard/public`
 - Install dependencies: `npm install`
 #### View in Browser
-- Navigate to http://<ip-of-host>:4620 to see your stats
+- Navigate to `http://<ip-of-host>:4620` to see your stats
