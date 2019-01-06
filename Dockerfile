@@ -22,10 +22,12 @@ RUN apt-get update && apt-get install -yq \
     php7.2-xml \
     php7.2-zip \
     php7.2-intl \
+	php7.2-mysql \
     # Install Python
     python3-minimal \
     python3-pip \
     # Install tools
+	mysql-client \
     nano \
     wget \
     unzip \
@@ -58,15 +60,16 @@ ENV APACHE_LOG_DIR /var/log/apache2
 ENV APACHE_LOCK_DIR /var/lock/apache2
 ENV APACHE_PID_FILE /var/run/apache2.pid
 
-# Python Packages (specific for Custom Agent https://github.com/primus852/SC2-AI-Reinforced)
-RUN pip3 install pandas
-RUN pip3 install numpy
-RUN pip3 install Pillow
-RUN pip3 install matplotlib
-RUN pip3 install peewee
+ADD sc2ai /sc2ai
 
-# Install PySC2 https://github.com/deepmind/pysc2
-RUN pip3 install pysc2
+# Install the Agent
+WORKDIR /sc2ai/agent
+RUN cd /sc2ai/agent && python3 /sc2ai/agent/setup.py install
+
+# Install the Dashboard
+WORKDIR /sc2ai/dashboard/public
+RUN cd /sc2ai/dashboard/ && composer install
+RUN cd /sc2ai/dashboard/public && npm install
 
 WORKDIR /sc2ai
 

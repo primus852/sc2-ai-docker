@@ -10,18 +10,11 @@
 
 __Attention__ With MinGW64 on Windows, use `docker-compose up -d && winpty docker-compose run sc2 bash` (prefixed with `winpty` for an interactive shell)
 
-### Usage (within the container)
-- Create a Custom Agent (or clone [https://github.com/primus852/SC2-AI-Reinforced](https://github.com/primus852/SC2-AI-Reinforced) to begin with)
+- Create the Database on first run `cd dashboard && php bin/console make:migration && php bin/console doctrine:migrations:migrate -y`
+
+### Agent Usage (within the container)
 - go to folder of custom client
-- Start the Agent `python3 -m pysc2.bin.agent --map Simple64 --agent refined.DeepAgent --agent_race terran --norender --parallel 2`
+- Start the Agent ` python3 -m pysc2.bin.agent --map Simple64 --agent agent.agent.DeepAgent --agent_race terran --norender --parallel <NO-OF-PARALLEL-JOBS>`
 
 ### Dashboard
-#### Install Symfony Project
-- go to `dashboard` folder `cd /sc2ai/dashboard`
-- Install dependencies: `composer install`
-- Edit `.env` with the DB Settings: `sqlite:////%kernel.project_dir%/../../sc2ai/SC2-AI-Reinforced/db/stats.db` (or any other db)
-#### Install NPM Dependencies
-- go to `public` folder `cd /sc2ai/dashboard/public`
-- Install dependencies: `npm install`
-#### View in Browser
-- Navigate to `http://<ip-of-host>:4620` to see your stats
+- Navigate to `http://localhost:4620` to see your stats
