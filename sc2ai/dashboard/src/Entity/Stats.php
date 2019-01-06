@@ -38,9 +38,9 @@ class Stats
     /**
      * @var int
      *
-     * @ORM\Column(name="score", type="integer", nullable=false)
+     * @ORM\Column(name="game_score", type="integer", nullable=false)
      */
-    private $score;
+    private $gameScore;
 
     public function getId(): ?int
     {
@@ -71,14 +71,14 @@ class Stats
         return $this;
     }
 
-    public function getScore(): ?int
+    public function getGameScore(): ?int
     {
-        return $this->score;
+        return $this->gameScore;
     }
 
-    public function setScore(int $score): self
+    public function setGameScore(int $gameScore): self
     {
-        $this->score = $score;
+        $this->gameScore = $gameScore;
 
         return $this;
     }

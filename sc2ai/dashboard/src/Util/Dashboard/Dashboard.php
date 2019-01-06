@@ -159,7 +159,7 @@ class Dashboard
      * @param int $limit
      * @return array
      */
-    public function get_summary(int $limit = 0)
+    public function get_summary(?int $limit = 0)
     {
 
         /**
