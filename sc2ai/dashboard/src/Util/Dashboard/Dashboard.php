@@ -42,8 +42,7 @@ class Dashboard
             ->orderBy(array(
                 'created' => 'DESC'
             ))
-            ->setMaxResults(1)
-        ;
+            ->setMaxResults(1);
 
 
         $stats = $this->em->getRepository(Stats::class)->matching($criteria);
@@ -51,19 +50,19 @@ class Dashboard
         $status = 'offline';
         $status_class = 'danger';
 
-        $now = new \DateTime('now');
+        $now = new \DateTime('now', new \DateTimeZone('UTC'));
         $now->modify('-5 minutes');
         $last = null;
 
-        foreach($stats as $stat){
-            $last = $stat->getCreated();
+        foreach ($stats as $stat) {
+            $last = new \DateTime($stat->getCreated()->format('Y-m-d H:i:s'), new \DateTimeZone('UTC'));
         }
 
         /**
          * If last one is older than $now, set offline
          */
-        if($last !== null){
-            if($last > $now){
+        if ($last !== null) {
+            if ($last > $now) {
                 $status = 'online';
                 $status_class = 'success';
             }
@@ -107,7 +106,7 @@ class Dashboard
         /**
          * If we have a limit, apply...
          */
-        if($limit > 0){
+        if ($limit > 0) {
             $criteria->setMaxResults($limit);
         }
 
@@ -125,32 +124,32 @@ class Dashboard
         $total = 0;
 
         /* @var $stat Stats */
-        foreach($stats as $stat){
+        foreach ($stats as $stat) {
 
             $total++;
 
-            if($stat->getOutcome() === 1){
+            if ($stat->getOutcome() === 1) {
                 $win++;
             }
 
-            if($stat->getOutcome() === -1){
+            if ($stat->getOutcome() === -1) {
                 $loss++;
             }
 
-            if($stat->getOutcome() === 0){
+            if ($stat->getOutcome() === 0) {
                 $draw++;
             }
 
-            $win_str .= round($win * 100 / $total,2).',';
-            $loss_str .= round($loss * 100 / $total,2).',';
-            $draw_str .= round($draw * 100 / $total,2).',';
+            $win_str .= round($win * 100 / $total, 2) . ',';
+            $loss_str .= round($loss * 100 / $total, 2) . ',';
+            $draw_str .= round($draw * 100 / $total, 2) . ',';
 
         }
 
         return array(
-            'win' => substr($win_str,0,-1),
-            'loss' => substr($loss_str,0,-1),
-            'draw' => substr($draw_str,0,-1),
+            'win' => substr($win_str, 0, -1),
+            'loss' => substr($loss_str, 0, -1),
+            'draw' => substr($draw_str, 0, -1),
         );
 
     }
@@ -185,24 +184,24 @@ class Dashboard
         /**
          * If we have a limit, apply...
          */
-        if($limit > 0){
+        if ($limit > 0) {
             $criteria->setMaxResults($limit);
         }
 
         $stats = $this->em->getRepository(Stats::class)->matching($criteria);
 
         /* @var $stat \App\Entity\Stats */
-        foreach($stats as $stat){
+        foreach ($stats as $stat) {
 
-            if($stat->getOutcome() === 1){
+            if ($stat->getOutcome() === 1) {
                 $result['win']++;
             }
 
-            if($stat->getOutcome() === -1){
+            if ($stat->getOutcome() === -1) {
                 $result['loss']++;
             }
 
-            if($stat->getOutcome() === 0){
+            if ($stat->getOutcome() === 0) {
                 $result['draw']++;
             }
 
@@ -214,7 +213,7 @@ class Dashboard
         $loss_pct = 0;
         $draw_pct = 0;
 
-        if($result['total'] > 0){
+        if ($result['total'] > 0) {
             $win_pct = round($result['win'] * 100 / $result['total'], 2);
             $loss_pct = round($result['loss'] * 100 / $result['total'], 2);
             $draw_pct = round($result['draw'] * 100 / $result['total'], 2);
