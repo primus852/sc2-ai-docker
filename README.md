@@ -17,7 +17,12 @@ __Attention__ With MinGW64 on Windows, use `docker-compose up -d && winpty docke
 __Attention__: DO NOT USE THE `parallel` flag, as there is an issue saving the qtable.
 
 ### Dashboard
+- Due to bug \#2 please execute:
+- `cd dashboard`
+- `composer install`
+- `cd public && npm install`
 - Navigate to `http://localhost:4620` to see your stats
 
 ### ToDO
-- in order to make `parallel` flag available, the QTable loading/saving needs to be reworked
+- \#1 in order to make `parallel` flag available, the QTable loading/saving needs to be reworked
+- \#2 Unfortunately, there is an issue with the Dockerfile, line 69 - 74, it executes but it does not get added to the volume?
