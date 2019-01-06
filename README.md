@@ -10,6 +10,7 @@
 
 __Attention__ With MinGW64 on Windows, use `docker-compose up -d && winpty docker-compose run sc2 bash` (prefixed with `winpty` for an interactive shell)
 
+- Unfortunately there is an issue with 
 - Create the Database on first run `cd dashboard && php bin/console make:migration && php bin/console doctrine:migrations:migrate -y`
 
 ### Agent Usage (within the container)

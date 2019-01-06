@@ -21,7 +21,7 @@ setup(
         'pandas',
         'numpy',
         'pysc2',
-        'sqlalchemy',
-        'sqlalchemy-utils'
+        'SQLAlchemy',
+        'SQLAlchemy-Utils'
     ]
 )

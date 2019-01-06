@@ -64,11 +64,13 @@ ADD sc2ai /sc2ai
 
 # Install the Agent
 WORKDIR /sc2ai/agent
-RUN cd /sc2ai/agent && python3 /sc2ai/agent/setup.py install
+RUN cd /sc2ai/agent && pip3 install -r requirements.txt && python3 /sc2ai/agent/setup.py install
 
 # Install the Dashboard
-WORKDIR /sc2ai/dashboard/public
+WORKDIR /sc2ai/dashboard/
 RUN cd /sc2ai/dashboard/ && composer install
+
+WORKDIR /sc2ai/dashboard/public
 RUN cd /sc2ai/dashboard/public && npm install
 
 WORKDIR /sc2ai
