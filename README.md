@@ -10,12 +10,14 @@
 
 __Attention__ With MinGW64 on Windows, use `docker-compose up -d && winpty docker-compose run sc2 bash` (prefixed with `winpty` for an interactive shell)
 
-- Unfortunately there is an issue with 
-- Create the Database on first run `cd dashboard && php bin/console make:migration && php bin/console doctrine:migrations:migrate -y`
-
 ### Agent Usage (within the container)
 - go to folder of custom client
-- Start the Agent ` python3 -m pysc2.bin.agent --map Simple64 --agent agent.agent.DeepAgent --agent_race terran --norender --parallel <NO-OF-PARALLEL-JOBS>`
+- Start the Agent ` python3 -m pysc2.bin.agent --map Simple64 --agent agent.agent.DeepAgent --agent_race terran --norender`
+
+__Attention__: DO NOT USE THE `parallel` flag, as there is an issue saving the qtable.
 
 ### Dashboard
 - Navigate to `http://localhost:4620` to see your stats
+
+### ToDO
+- in order to make `parallel` flag available, the QTable loading/saving needs to be reworked
