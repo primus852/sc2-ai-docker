@@ -1,11 +1,15 @@
 import random
 import os
+import datetime
 
 import pandas as pd
 import numpy as np
 import math
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, MetaData, Table, Column
+from sqlalchemy.types import Integer, DateTime
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy_utils import database_exists, create_database
 
 from . import helpers
@@ -60,10 +64,30 @@ SMART_ACTIONS = [
     ACTION_BUILD_MARINE,
 ]
 
+# Stats Pickle
+DATA_FILE = 'data/qtable.gz'
+
 # SQLAlchemy Connection
-engine = create_engine('mysql://admin:ABcd1234@mysql/sc2_stats')
+engine = create_engine('mysql+pymysql://admin:ABcd1234@mysql/sc2_stats')
+Base = declarative_base()
+
+
+# Create Database if it does not exist
 if not database_exists(engine.url):
     create_database(engine.url)
+
+
+# Create the Table if it does not exist
+class Stats(Base):
+    __tablename__ = 'stats'
+    id = Column(Integer, primary_key=True)
+    created = Column(DateTime, nullable=False)
+    outcome = Column(Integer, nullable=False)
+    game_score = Column(Integer, nullable=False)
+
+
+session = sessionmaker(bind=engine)
+Base.metadata.create_all(engine)
 
 # ???
 for mm_x in range(0, 64):
@@ -93,9 +117,15 @@ class DeepAgent(base_agent.BaseAgent):
         self.connection = engine.connect()
 
         # Read previous Learning from DB
-        self.qlearn.q_table = pd.read_sql('sc2_qlearn', self.connection)
+        # if engine.dialect.has_table(engine, 'sc2_qlearn'):
+        #    self.qlearn.q_table = pd.read_sql_table('sc2_qlearn', engine)
 
-    def split_action(self, action_id):
+        # Read previous Learning
+        if os.path.isfile(DATA_FILE):
+            self.qlearn.q_table = pd.read_pickle(DATA_FILE, compression='gzip')
+
+    @staticmethod
+    def split_action(action_id):
         smart_action = SMART_ACTIONS[action_id]
 
         x = 0
@@ -113,16 +143,21 @@ class DeepAgent(base_agent.BaseAgent):
 
             self.qlearn.learn(str(self.previous_state), self.previous_action, reward, 'terminal')
 
-            self.qlearn.q_table.to_sql('sc2_qlearn', self.connection, if_exists='append')
+            # self.qlearn.q_table.to_sql('sc2_qlearn', engine, if_exists='replace', index=False)
+            self.qlearn.q_table.to_pickle(DATA_FILE, 'gzip')
 
             self.previous_action = None
             self.previous_state = None
 
             self.move_number = 0
 
-            # Save the Stats to the SQLite DB
-            # entry = Stats(outcome=obs.reward, score=obs.observation.score_cumulative[0])
-            # entry.save()
+            # Save the Stats to the DB
+            s = session()
+            game_score = int(obs.observation.score_cumulative[0])
+            stats = Stats(created=datetime.datetime.utcnow(), outcome=obs.reward,
+                          game_score=game_score)
+            s.add(stats)
+            s.commit()
 
             return actions.FunctionCall(_NO_OP, [])
 
