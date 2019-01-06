@@ -1,11 +1,12 @@
 import random
 import os
-import datetime
-import pytz
 
 import pandas as pd
 import numpy as np
 import math
+
+from sqlalchemy import create_engine
+from sqlalchemy_utils import database_exists, create_database
 
 from . import helpers
 from . import qlearning as qlt
@@ -51,12 +52,18 @@ ACTION_BUILD_BARRACKS = 'buildbarracks'
 ACTION_BUILD_MARINE = 'buildmarine'
 ACTION_ATTACK = 'attack'
 
+# Actions for QLearningTable to choose from
 SMART_ACTIONS = [
     ACTION_DO_NOTHING,
     ACTION_BUILD_SUPPLY_DEPOT,
     ACTION_BUILD_BARRACKS,
     ACTION_BUILD_MARINE,
 ]
+
+# SQLAlchemy Connection
+engine = create_engine('mysql://admin:ABcd1234@mysql/sc2_stats')
+if not database_exists(engine.url):
+    create_database(engine.url)
 
 # ???
 for mm_x in range(0, 64):
@@ -83,11 +90,10 @@ class DeepAgent(base_agent.BaseAgent):
         self.base_top_left = None
 
         # MySQL Connection
-        self.db = db
+        self.connection = engine.connect()
 
-        # Read previous Learning
-        if os.path.isfile(DATA_FILE + '.gz'):
-            self.qlearn.q_table = pd.read_pickle(DATA_FILE + '.gz', compression='gzip')
+        # Read previous Learning from DB
+        self.qlearn.q_table = pd.read_sql('sc2_qlearn', self.connection)
 
     def split_action(self, action_id):
         smart_action = SMART_ACTIONS[action_id]
@@ -107,7 +113,7 @@ class DeepAgent(base_agent.BaseAgent):
 
             self.qlearn.learn(str(self.previous_state), self.previous_action, reward, 'terminal')
 
-            self.qlearn.q_table.to_pickle(DATA_FILE + '.gz', 'gzip')
+            self.qlearn.q_table.to_sql('sc2_qlearn', self.connection, if_exists='append')
 
             self.previous_action = None
             self.previous_state = None
