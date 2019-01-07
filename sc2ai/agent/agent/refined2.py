@@ -2,21 +2,21 @@ import random
 import math
 import os
 import datetime
+import time
 
 import numpy as np
 import pandas as pd
 
-from sqlalchemy import create_engine, MetaData, Table, Column
-from sqlalchemy.types import Integer, DateTime
+from sqlalchemy import create_engine, Column
+from sqlalchemy.types import Integer, DateTime, Float
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy_utils import database_exists, create_database
 
 from pysc2.agents import base_agent
-from pysc2.lib import actions
-from pysc2.lib import features
+from pysc2.lib import actions, features, units
 
-# python3 -m pysc2.bin.agent  --map Simple64  --agent agent.refined.SparseAgent  --agent_race terran  --max_agent_steps 0 --norender
+# python3 -m pysc2.bin.agent  --map Simple64  --agent agent.refined2.SparseAgent  --agent_race terran  --max_agent_steps 0 --use_feature_units --norender
 
 _NO_OP = actions.FUNCTIONS.no_op.id
 _SELECT_POINT = actions.FUNCTIONS.select_point.id
@@ -76,6 +76,7 @@ class Stats(Base):
     created = Column(DateTime, nullable=False)
     outcome = Column(Integer, nullable=False)
     game_score = Column(Integer, nullable=False)
+    duration = Column(Float, nullable=False)
 
 
 session = sessionmaker(bind=engine)
@@ -97,7 +98,10 @@ class QLearningTable:
         self.q_table = pd.DataFrame(columns=self.actions, dtype=np.float64)
         self.disallowed_actions = {}
 
-    def choose_action(self, observation, excluded_actions=[]):
+    def choose_action(self, observation, excluded_actions=None):
+        if excluded_actions is None:
+            excluded_actions = []
+
         self.check_state_exist(observation)
 
         self.disallowed_actions[observation] = excluded_actions
@@ -159,7 +163,12 @@ class SparseAgent(base_agent.BaseAgent):
         self.cc_y = None
         self.cc_x = None
 
+        self.base_top_left = None
+
         self.move_number = 0
+
+        """ Start the Time (for Statistics) """
+        self.timer_start = time.process_time()
 
         if os.path.isfile(DATA_FILE + '.gz'):
             self.qlearn.q_table = pd.read_pickle(DATA_FILE + '.gz', compression='gzip')
@@ -186,6 +195,10 @@ class SparseAgent(base_agent.BaseAgent):
 
         return (smart_action, x, y)
 
+    def get_units_by_type(self, obs, unit_type):
+        return [unit for unit in obs.observation.feature_units
+                if unit.unit_type == unit_type]
+
     def step(self, obs):
         super(SparseAgent, self).step(obs)
 
@@ -201,105 +214,139 @@ class SparseAgent(base_agent.BaseAgent):
 
             self.move_number = 0
 
-            # Save the Stats to the DB
+            """ Stop the Timer (Statistics) """
+            time_diff = time.process_time() - self.timer_start
+
+            """ Save the Statistic to the Database """
             s = session()
             game_score = int(obs.observation.score_cumulative[0])
             stats = Stats(created=datetime.datetime.utcnow(), outcome=obs.reward,
-                          game_score=game_score)
+                          game_score=game_score, duration=time_diff)
             s.add(stats)
             s.commit()
 
             return actions.FunctionCall(_NO_OP, [])
 
-        unit_type = obs.observation['feature_screen'][_UNIT_TYPE]
-
         if obs.first():
-            player_y, player_x = (obs.observation['feature_minimap'][_PLAYER_RELATIVE] == _PLAYER_SELF).nonzero()
+            """ Get the position of the Player """
+            player_y, player_x = (obs.observation.feature_minimap.player_relative ==
+                                  features.PlayerRelative.SELF).nonzero()
+
+            """ Set the Base top left """
             self.base_top_left = 1 if player_y.any() and player_y.mean() <= 31 else 0
 
-            self.cc_y, self.cc_x = (unit_type == _TERRAN_COMMANDCENTER).nonzero()
+            """ Assign the Command Center Coords for building the other buildings around it"""
+            self.cc_y, self.cc_x = self.get_units_by_type(obs, units.Terran.CommandCenter)
 
-        cc_y, cc_x = (unit_type == _TERRAN_COMMANDCENTER).nonzero()
+        """ Check if we have a CommandCenter """
+        cc_y, cc_x = self.get_units_by_type(obs, units.Terran.CommandCenter)
         cc_count = 1 if cc_y.any() else 0
 
-        depot_y, depot_x = (unit_type == _TERRAN_SUPPLY_DEPOT).nonzero()
+        """ Count the Supply Depots """
+        depot_y, depot_x = self.get_units_by_type(obs, units.Terran.SupplyDepot)
         supply_depot_count = int(round(len(depot_y) / 69))
 
-        barracks_y, barracks_x = (unit_type == _TERRAN_BARRACKS).nonzero()
+        """ Count the Barracks """
+        barracks_y, barracks_x = self.get_units_by_type(obs, units.Terran.Barracks)
         barracks_count = int(round(len(barracks_y) / 137))
 
-        supply_used = obs.observation['player'][3]
-        supply_limit = obs.observation['player'][4]
-        army_supply = obs.observation['player'][5]
-        worker_supply = obs.observation['player'][6]
+        """ Get the available supply """
+        supply_free = (obs.observation.player.food_cap - obs.observation.player.food_used)
 
-        supply_free = supply_limit - supply_used
+        """ Get the Army Supply """
+        army_supply = obs.observation.player.food_army
 
+        """ Get the Worker Supply """
+        worker_supply = obs.observation.player.food_workers
+
+        """ Multi Step Action """
         if self.move_number == 0:
             self.move_number += 1
 
+            """ Init the Current States with Zeros (size = 12) """
             current_state = np.zeros(12)
+
+            """ Assign the first States """
             current_state[0] = cc_count
             current_state[1] = supply_depot_count
             current_state[2] = barracks_count
-            current_state[3] = obs.observation['player'][_ARMY_SUPPLY]
+            current_state[3] = army_supply
 
+            """ Detect where the Enemy is and create 4 danger zones """
             hot_squares = np.zeros(4)
-            enemy_y, enemy_x = (obs.observation['feature_minimap'][_PLAYER_RELATIVE] == _PLAYER_HOSTILE).nonzero()
+            enemy_y, enemy_x = (
+                    obs.observation.feature_minimap.player_relative == features.PlayerRelative.ENEMY).nonzero()
             for i in range(0, len(enemy_y)):
                 y = int(math.ceil((enemy_y[i] + 1) / 32))
                 x = int(math.ceil((enemy_x[i] + 1) / 32))
 
                 hot_squares[((y - 1) * 2) + (x - 1)] = 1
 
+            """ If we are not in the Top Left Corner, invert """
             if not self.base_top_left:
                 hot_squares = hot_squares[::-1]
 
+            """ Assign Danger Zones to States """
             for i in range(0, 4):
                 current_state[i + 4] = hot_squares[i]
 
+            """ Detect where we are and create 4 friendly zones """
             green_squares = np.zeros(4)
-            friendly_y, friendly_x = (obs.observation['feature_minimap'][_PLAYER_RELATIVE] == _PLAYER_SELF).nonzero()
+            friendly_y, friendly_x = (
+                    obs.observation.feature_minimap.player_relative == features.PlayerRelative.SELF).nonzero()
             for i in range(0, len(friendly_y)):
                 y = int(math.ceil((friendly_y[i] + 1) / 32))
                 x = int(math.ceil((friendly_x[i] + 1) / 32))
 
                 green_squares[((y - 1) * 2) + (x - 1)] = 1
 
+            """ If we are not in the Top Left Corner, invert """
             if not self.base_top_left:
                 green_squares = green_squares[::-1]
 
+            """ Assign Friendly Zones to States """
             for i in range(0, 4):
                 current_state[i + 8] = green_squares[i]
 
+            """ Send the States to the QTable """
             if self.previous_action is not None:
                 self.qlearn.learn(str(self.previous_state), self.previous_action, 0, str(current_state))
 
+            """ In order to speed up learning, we exclude some Actions """
             excluded_actions = []
+
+            """ If we have no workers or if we already have 2 Supply Depots """
             if supply_depot_count == 2 or worker_supply == 0:
                 excluded_actions.append(1)
 
+            """ If we have No Supply Depots, Barracks or Workers """
             if supply_depot_count == 0 or barracks_count == 2 or worker_supply == 0:
                 excluded_actions.append(2)
 
+            """ If we have no Supply available or no Barracks build """
             if supply_free == 0 or barracks_count == 0:
                 excluded_actions.append(3)
 
+            """ If we have no Army """
             if army_supply == 0:
                 excluded_actions.append(4)
                 excluded_actions.append(5)
                 excluded_actions.append(6)
                 excluded_actions.append(7)
 
+            """ Choose an Action from QTable """
             rl_action = self.qlearn.choose_action(str(current_state), excluded_actions)
 
+            """ Reset the current to previous for next round (only in move_number = 0) """
             self.previous_state = current_state
             self.previous_action = rl_action
 
+            """ Get the Smart Action """
             smart_action, x, y = self.splitAction(self.previous_action)
 
             if smart_action == ACTION_BUILD_BARRACKS or smart_action == ACTION_BUILD_SUPPLY_DEPOT:
-                unit_y, unit_x = (unit_type == _TERRAN_SCV).nonzero()
+                """ BUILD_BARRACKS or BUILD_SUPPLY_DEPOT - MOVE 1: Select SCV """
+                unit_y, unit_x = self.get_units_by_type(obs, units.Terran.SCV)
 
                 if unit_y.any():
                     i = random.randint(0, len(unit_y) - 1)
@@ -308,6 +355,7 @@ class SparseAgent(base_agent.BaseAgent):
                     return actions.FunctionCall(_SELECT_POINT, [_NOT_QUEUED, target])
 
             elif smart_action == ACTION_BUILD_MARINE:
+                """ BUILD MARINE - MOVE 1: Select Barracks """
                 if barracks_y.any():
                     i = random.randint(0, len(barracks_y) - 1)
                     target = [barracks_x[i], barracks_y[i]]
@@ -315,15 +363,19 @@ class SparseAgent(base_agent.BaseAgent):
                     return actions.FunctionCall(_SELECT_POINT, [_SELECT_ALL, target])
 
             elif smart_action == ACTION_ATTACK:
+                """ ACTION ATTACK - MOVE 1: Select Army """
                 if _SELECT_ARMY in obs.observation['available_actions']:
                     return actions.FunctionCall(_SELECT_ARMY, [_NOT_QUEUED])
 
         elif self.move_number == 1:
             self.move_number += 1
 
+            """ Get the Smart Action """
             smart_action, x, y = self.splitAction(self.previous_action)
 
             if smart_action == ACTION_BUILD_SUPPLY_DEPOT:
+                """ BUILD_SUPPLY_DEPOT - MOVE 2: Move SCV to Target Location """
+                target = None
                 if supply_depot_count < 2 and _BUILD_SUPPLY_DEPOT in obs.observation['available_actions']:
                     if self.cc_y.any():
                         if supply_depot_count == 0:
@@ -334,6 +386,8 @@ class SparseAgent(base_agent.BaseAgent):
                         return actions.FunctionCall(_BUILD_SUPPLY_DEPOT, [_NOT_QUEUED, target])
 
             elif smart_action == ACTION_BUILD_BARRACKS:
+                """ BUILD_BARRACKS - MOVE 2: Move SCV to Target Location """
+                target = None
                 if barracks_count < 2 and _BUILD_BARRACKS in obs.observation['available_actions']:
                     if self.cc_y.any():
                         if barracks_count == 0:
@@ -344,18 +398,23 @@ class SparseAgent(base_agent.BaseAgent):
                         return actions.FunctionCall(_BUILD_BARRACKS, [_NOT_QUEUED, target])
 
             elif smart_action == ACTION_BUILD_MARINE:
+                """ BUILD_MARINE - MOVE 2: Train Marine """
                 if _TRAIN_MARINE in obs.observation['available_actions']:
                     return actions.FunctionCall(_TRAIN_MARINE, [_QUEUED])
 
             elif smart_action == ACTION_ATTACK:
+                """ ATTACK - MOVE 2: Move Army to Target """
                 do_it = True
 
+                """ Dont't do it if we have single selected an SCV """
                 if len(obs.observation['single_select']) > 0 and obs.observation['single_select'][0][0] == _TERRAN_SCV:
                     do_it = False
 
+                """ Dont't do it if we have multi selected SCVs """
                 if len(obs.observation['multi_select']) > 0 and obs.observation['multi_select'][0][0] == _TERRAN_SCV:
                     do_it = False
 
+                """ Move to Random Location with Attackmove """
                 if do_it and _ATTACK_MINIMAP in obs.observation["available_actions"]:
                     x_offset = random.randint(-1, 1)
                     y_offset = random.randint(-1, 1)
@@ -367,11 +426,13 @@ class SparseAgent(base_agent.BaseAgent):
         elif self.move_number == 2:
             self.move_number = 0
 
+            """ Get the Smart Action """
             smart_action, x, y = self.splitAction(self.previous_action)
 
             if smart_action == ACTION_BUILD_BARRACKS or smart_action == ACTION_BUILD_SUPPLY_DEPOT:
+                """ BUILD_BARRACKS or BUILD_SUPPLY_DEPOT - MOVE 3: Let the SCV return to Mineral Field """
                 if _HARVEST_GATHER in obs.observation['available_actions']:
-                    unit_y, unit_x = (unit_type == _NEUTRAL_MINERAL_FIELD).nonzero()
+                    unit_y, unit_x = self.get_units_by_type(obs, units.Neutral.MineralField)
 
                     if unit_y.any():
                         i = random.randint(0, len(unit_y) - 1)
