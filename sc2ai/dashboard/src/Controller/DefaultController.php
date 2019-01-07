@@ -22,7 +22,7 @@ class DefaultController extends AbstractController
         $last = $dashboard->get_summary(100);
 
         $chart_totals = $dashboard->get_charts();
-        $chart_last = $dashboard->get_charts(100);
+        $chart_last = $dashboard->get_charts(100, 'DESC');
 
         try{
             $last_seen = $dashboard->last_seen();
