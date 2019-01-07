@@ -122,7 +122,7 @@ class DeepAgent(base_agent.BaseAgent):
 
         # Read previous Learning
         if os.path.isfile(os.path.join(DATA_FOLDER, DATA_FILE)):
-            os.chmod(os.path.join(DATA_FOLDER, DATA_FILE), 775)
+            os.chmod(os.path.join(DATA_FOLDER, DATA_FILE), 0o755)
             self.qlearn.q_table = pd.read_pickle(os.path.join(DATA_FOLDER, DATA_FILE), compression='gzip')
 
     @staticmethod
