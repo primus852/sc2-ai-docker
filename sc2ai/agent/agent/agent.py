@@ -144,8 +144,7 @@ class DeepAgent(base_agent.BaseAgent):
             self.qlearn.learn(str(self.previous_state), self.previous_action, reward, 'terminal')
 
             # self.qlearn.q_table.to_sql('sc2_qlearn', engine, if_exists='replace', index=False)
-            with open(os.path.join(DATA_FOLDER, DATA_FILE), "w") as data_file:
-                self.qlearn.q_table.to_pickle(data_file, 'gzip')
+            self.qlearn.q_table.to_pickle(os.path.join(DATA_FOLDER, DATA_FILE), 'gzip')
 
             self.previous_action = None
             self.previous_state = None
