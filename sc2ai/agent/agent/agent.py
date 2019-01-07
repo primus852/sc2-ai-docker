@@ -66,6 +66,7 @@ SMART_ACTIONS = [
 
 # Stats Pickle
 DATA_FILE = 'qtable.gz'
+DATA_FOLDER = '/sc2ai/agent/data'
 
 # SQLAlchemy Connection
 engine = create_engine('mysql+pymysql://admin:ABcd1234@mysql/sc2_stats')
@@ -120,7 +121,7 @@ class DeepAgent(base_agent.BaseAgent):
         #    self.qlearn.q_table = pd.read_sql_table('sc2_qlearn', engine)
 
         # Read previous Learning
-        if os.path.isfile(os.path.join('/sc2ai/data', DATA_FILE)):
+        if os.path.isfile(os.path.join(DATA_FOLDER, DATA_FILE)):
             self.qlearn.q_table = pd.read_pickle(DATA_FILE, compression='gzip')
 
     @staticmethod
@@ -143,7 +144,7 @@ class DeepAgent(base_agent.BaseAgent):
             self.qlearn.learn(str(self.previous_state), self.previous_action, reward, 'terminal')
 
             # self.qlearn.q_table.to_sql('sc2_qlearn', engine, if_exists='replace', index=False)
-            with open(os.path.join('/sc2ai/data', DATA_FILE), "w") as data_file:
+            with open(os.path.join(DATA_FOLDER, DATA_FILE), "w") as data_file:
                 self.qlearn.q_table.to_pickle(data_file, 'gzip')
 
             self.previous_action = None
