@@ -304,11 +304,11 @@ class DeepAgent(base_agent.BaseAgent):
                     if self.cc_y.any():
                         target = None
                         if barracks_count == 0:
-                            target = helpers.transform_distance(self, round(self.cc_x.mean()), 15,
-                                                                round(self.cc_y.mean()), -9)
+                            target = self.transform_distance(round(self.cc_x.mean()), 15,
+                                                             round(self.cc_y.mean()), -9)
                         elif barracks_count == 1:
-                            target = helpers.transform_distance(self, round(self.cc_x.mean()), 15,
-                                                                round(self.cc_y.mean()), 12)
+                            target = self.transform_distance(round(self.cc_x.mean()), 15,
+                                                             round(self.cc_y.mean()), 12)
 
                         return actions.FunctionCall(_BUILD_BARRACKS, [_NOT_QUEUED, target])
 
@@ -331,11 +331,8 @@ class DeepAgent(base_agent.BaseAgent):
 
                     return actions.FunctionCall(_ATTACK_MINIMAP,
                                                 [_NOT_QUEUED,
-                                                 helpers.transform_location(self,
-                                                                            int(x) + (
-                                                                                    x_offset * 8),
-                                                                            int(y) + (
-                                                                                    y_offset * 8))])
+                                                 self.transform_location(int(x) + (x_offset * 8),
+                                                                         int(y) + (y_offset * 8))])
 
         elif self.move_number == 2:
             self.move_number = 0
