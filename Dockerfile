@@ -29,6 +29,8 @@ RUN apt-get update && apt-get install -yq \
     # Install tools
 	mysql-client \
     nano \
+    cron \
+    htop \
     wget \
     unzip \
     nodejs \

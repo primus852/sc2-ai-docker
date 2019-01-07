@@ -25,6 +25,7 @@ services:
       volumes:
         - ./sc2ai:/sc2ai
         - ./apache/000-default.conf:/etc/apache2/sites-available/000-default.conf
+        - ./cron/crontab:/etc/crontab
       depends_on:
         - mysql
 networks:
