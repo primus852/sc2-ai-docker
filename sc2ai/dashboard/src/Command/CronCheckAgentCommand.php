@@ -9,6 +9,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
 class CronCheckAgentCommand extends Command
@@ -26,8 +27,7 @@ class CronCheckAgentCommand extends Command
     {
         $this
             ->setDescription('Check if the SC-AI-Agent is still running, if not restart it')
-            ->addArgument('debug', InputArgument::OPTIONAL, 'Debug Flag')
-        ;
+            ->addArgument('debug', InputArgument::OPTIONAL, 'Debug Flag');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -42,32 +42,32 @@ class CronCheckAgentCommand extends Command
         /**
          * Create new Dashboard
          */
-        try{
+        try {
             $dashboard = new Dashboard($this->em);
-        }catch (\Exception $e){
-            $io->error('Error Creating Dashboard: '.$e->getMessage());
+        } catch (\Exception $e) {
+            $io->error('Error Creating Dashboard: ' . $e->getMessage());
             exit();
         }
 
         /**
          * Get last seen of Agent
          */
-        try{
+        try {
             $last_seen = $dashboard->last_seen();
-        }catch (\Exception $e){
-            $io->error('Could not determine last Agent Update: '.$e->getMessage());
+        } catch (\Exception $e) {
+            $io->error('Could not determine last Agent Update: ' . $e->getMessage());
             exit();
         }
 
         /**
          * Print the Status
          */
-        $debug ? $io->text('Agent is: '.$last_seen['status']) : null;
+        $debug ? $io->text('Agent is: ' . $last_seen['status']) : null;
 
         /**
          * Restart if offline
          */
-        if($last_seen['status'] === 'offline'){
+        if ($last_seen['status'] === 'offline') {
 
             $debug ? $io->text('Trying to Restart...') : null;
 
@@ -75,11 +75,18 @@ class CronCheckAgentCommand extends Command
                 'python3 -m pysc2.bin.agent  --map Simple64  --agent agent.refined.SparseAgent  --agent_race terran  --max_agent_steps 0 --norender',
                 '/sc2ai/agent'
             );
-            $process->start();
+
+            try {
+                $process->mustRun();
+                $debug ? $io->text('Agent started...') : null;
+            } catch (ProcessFailedException $e) {
+                $io->error('Error Running Agent: ' . $e->getMessage());
+                exit();
+            }
 
             $debug ? $io->text('Agent should run again now') : null;
 
-        }else{
+        } else {
 
             $debug ? $io->success('All Clear and Running...') : null;
 
