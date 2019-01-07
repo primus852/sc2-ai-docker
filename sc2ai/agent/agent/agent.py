@@ -122,7 +122,7 @@ class DeepAgent(base_agent.BaseAgent):
 
         # Read previous Learning
         if os.path.isfile(os.path.join(DATA_FOLDER, DATA_FILE)):
-            self.qlearn.q_table = pd.read_pickle(DATA_FILE, compression='gzip')
+            self.qlearn.q_table = pd.read_pickle(os.path.join(DATA_FOLDER, DATA_FILE), compression='gzip')
 
     @staticmethod
     def split_action(action_id):
