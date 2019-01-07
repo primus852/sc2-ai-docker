@@ -133,13 +133,15 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="row">
-                            <div class="col-md-6"><strong>Time</strong></div>
+                            <div class="col-md-2"><strong>Game</strong></div>
+                            <div class="col-md-4"><strong>Time</strong></div>
                             <div class="col-md-3"><strong>Result</strong></div>
                             <div class="col-md-3"><strong>Score</strong></div>
                         </div>
                         {% for last_episode in last_episodes %}
                             <div class="row">
-                                <div class="col-md-6">{{ last_episode.created|date('Y-m-d H:i') }}</div>
+                                <div class="col-md-2">{{ last_episode.id }}</div>
+                                <div class="col-md-4">{{ last_episode.created|date('Y-m-d H:i') }}</div>
                                 <div class="col-md-3">
                                     {% if last_episode.outcome == -1 %}
                                         Loss
