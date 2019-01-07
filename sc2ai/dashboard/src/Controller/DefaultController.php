@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Stats;
 use App\Util\Dashboard\Dashboard;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class DefaultController extends AbstractController
@@ -22,6 +23,13 @@ class DefaultController extends AbstractController
 
         $chart_totals = $dashboard->get_charts();
         $chart_last = $dashboard->get_charts(100);
+
+        try{
+            $last_seen = $dashboard->last_seen();
+            $last_episodes = $dashboard->last_episodes();
+        }catch (\Exception $e){
+            throw new NotFoundHttpException($e->getMessage());
+        }
 
         return $this->render('default/index.html.twig', array(
             'controller_name' => 'Stats',
@@ -45,7 +53,8 @@ class DefaultController extends AbstractController
                 'loss' => $chart_last['loss'],
                 'draw' => $chart_last['draw'],
             ),
-            'last_seen' => $dashboard->last_seen(),
+            'last_seen' => $last_seen,
+            'last_episodes' => $last_episodes,
             'episodes' => $dashboard->total_episodes(),
         ));
     }

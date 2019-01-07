@@ -12,106 +12,139 @@
         </h4>
         <br>
         <div class="row">
-            <div class="col-md-12">
-                <h3>Total {{ episodes }} Episodes</h3>
-            </div>
-        </div>
-        <div class="row stats_panel" id="totals">
-            <div class="col-md-6">
+            <div class="col-md-8">
                 <div class="row">
-                    <div class="col-md-4">
-                        <div class="card rounded">
-                            <div class="card-image">
-                                <span class="card-notify-year">Win</span>
+                    <div class="col-md-12">
+                        <h3>Total {{ episodes }} Episodes</h3>
+                    </div>
+                </div>
+                <div class="row stats_panel" id="totals">
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="card rounded">
+                                    <div class="card-image">
+                                        <span class="card-notify-year">Win</span>
+                                    </div>
+                                    <div class="card-body text-center">
+                                        <div class="ad-title m-auto">
+                                            <h5>{{ total.win }}&percnt;</h5>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="card-body text-center">
-                                <div class="ad-title m-auto">
-                                    <h2>{{ total.win }}&percnt;</h2>
+                            <div class="col-md-4">
+                                <div class="card rounded">
+                                    <div class="card-image">
+                                        <span class="card-notify-year">Loss</span>
+                                    </div>
+                                    <div class="card-body text-center">
+                                        <div class="ad-title m-auto">
+                                            <h5>{{ total.loss }}&percnt;</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card rounded">
+                                    <div class="card-image">
+                                        <span class="card-notify-year">Draw</span>
+                                    </div>
+                                    <div class="card-body text-center">
+                                        <div class="ad-title m-auto">
+                                            <h5>{{ total.draw }}&percnt;</h5>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="card rounded">
-                            <div class="card-image">
-                                <span class="card-notify-year">Loss</span>
+                    <div class="col-md-6">
+                        <div id="chart_total"></div>
+                    </div>
+                </div>
+                <br/>
+                <hr/>
+                <br/>
+                <div class="row">
+                    <div class="col-md-12">
+                        <h3>Last 100 Episodes</h3>
+                    </div>
+                </div>
+                <div class="row stats_panel" id="lasts">
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="card rounded">
+                                    <div class="card-image">
+                                        <span class="card-notify-year">Win</span>
+                                    </div>
+                                    <div class="card-body text-center">
+                                        <div class="ad-title m-auto">
+                                            <h5>{{ last.win }}&percnt;</h5>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="card-body text-center">
-                                <div class="ad-title m-auto">
-                                    <h2>{{ total.loss }}&percnt;</h2>
+                            <div class="col-md-4">
+                                <div class="card rounded">
+                                    <div class="card-image">
+                                        <span class="card-notify-year">Loss</span>
+                                    </div>
+                                    <div class="card-body text-center">
+                                        <div class="ad-title m-auto">
+                                            <h5>{{ last.loss }}&percnt;</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card rounded">
+                                    <div class="card-image">
+                                        <span class="card-notify-year">Draw</span>
+                                    </div>
+                                    <div class="card-body text-center">
+                                        <div class="ad-title m-auto">
+                                            <h5>{{ last.draw }}&percnt;</h5>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="card rounded">
-                            <div class="card-image">
-                                <span class="card-notify-year">Draw</span>
-                            </div>
-                            <div class="card-body text-center">
-                                <div class="ad-title m-auto">
-                                    <h2>{{ total.draw }}&percnt;</h2>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="col-md-6">
+                        <div id="chart_last"></div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div id="chart_total"></div>
-            </div>
-        </div>
-        <br/>
-        <hr/>
-        <br/>
-        <div class="row">
-            <div class="col-md-12">
-                <h3>Last 100 Episodes</h3>
-            </div>
-        </div>
-        <div class="row stats_panel" id="lasts">
-            <div class="col-md-6">
+            <div class="col-md-4">
+                <h3>Last 25 Games</h3>
                 <div class="row">
-                    <div class="col-md-4">
-                        <div class="card rounded">
-                            <div class="card-image">
-                                <span class="card-notify-year">Win</span>
-                            </div>
-                            <div class="card-body text-center">
-                                <div class="ad-title m-auto">
-                                    <h2>{{ last.win }}&percnt;</h2>
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-6"><strong>Time</strong></div>
+                            <div class="col-md-3"><strong>Result</strong></div>
+                            <div class="col-md-3"><strong>Score</strong></div>
+                        </div>
+                        {% for last_episode in last_episodes %}
+                            <div class="row">
+                                <div class="col-md-6">{{ last_episode.created|date('Y-m-d H:i') }}</div>
+                                <div class="col-md-3">
+                                    {% if last_episode.outcome == -1 %}
+                                        Loss
+                                    {% elseif last_episode.outcome == 0 %}
+                                        Draw
+                                    {% else %}
+                                        Win
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-3">
+                                    {{ last_episode.gameScore }}
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card rounded">
-                            <div class="card-image">
-                                <span class="card-notify-year">Loss</span>
-                            </div>
-                            <div class="card-body text-center">
-                                <div class="ad-title m-auto">
-                                    <h2>{{ last.loss }}&percnt;</h2>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card rounded">
-                            <div class="card-image">
-                                <span class="card-notify-year">Draw</span>
-                            </div>
-                            <div class="card-body text-center">
-                                <div class="ad-title m-auto">
-                                    <h2>{{ last.draw }}&percnt;</h2>
-                                </div>
-                            </div>
-                        </div>
+                        {% endfor %}
                     </div>
                 </div>
-            </div>
-            <div class="col-md-6">
-                <div id="chart_last"></div>
             </div>
         </div>
     </div>

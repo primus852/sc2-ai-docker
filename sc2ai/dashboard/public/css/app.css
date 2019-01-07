@@ -99,5 +99,6 @@ body {
 
 .stats_panel .ad-title h5 {
     text-transform: uppercase;
-    font-size: 18px;
+    font-size: 24px;
+    padding-top:12px;
 }

@@ -77,6 +77,31 @@ class Dashboard
     }
 
     /**
+     * @param int|null $limit
+     * @return mixed
+     */
+    public function last_episodes(?int $limit = 25)
+    {
+
+        /**
+         * Create Criteria
+         */
+        $criteria = Criteria::create();
+        $criteria
+            ->where(Criteria::expr()->gt('id', 0))
+            ->orderBy(array(
+                'created' => 'DESC'
+            ))
+            ->setMaxResults($limit);
+
+
+        $stats = $this->em->getRepository(Stats::class)->matching($criteria);
+
+        return $stats;
+
+    }
+
+    /**
      * @return int
      */
     public function total_episodes()
@@ -90,7 +115,7 @@ class Dashboard
      * @param int $limit
      * @return array
      */
-    public function get_charts(int $limit = 0)
+    public function get_charts(?int $limit = 0)
     {
 
         /**
@@ -140,9 +165,9 @@ class Dashboard
                 $draw++;
             }
 
-            $win_str .= round($win * 100 / $total, 2) . ',';
-            $loss_str .= round($loss * 100 / $total, 2) . ',';
-            $draw_str .= round($draw * 100 / $total, 2) . ',';
+            $win_str .= round($win * 100 / $total, 0) . ',';
+            $loss_str .= round($loss * 100 / $total, 0) . ',';
+            $draw_str .= round($draw * 100 / $total, 0) . ',';
 
         }
 
@@ -214,9 +239,9 @@ class Dashboard
         $draw_pct = 0;
 
         if ($result['total'] > 0) {
-            $win_pct = round($result['win'] * 100 / $result['total'], 2);
-            $loss_pct = round($result['loss'] * 100 / $result['total'], 2);
-            $draw_pct = round($result['draw'] * 100 / $result['total'], 2);
+            $win_pct = round($result['win'] * 100 / $result['total'], 0);
+            $loss_pct = round($result['loss'] * 100 / $result['total'], 0);
+            $draw_pct = round($result['draw'] * 100 / $result['total'], 0);
         }
 
         return array(
