@@ -47,11 +47,13 @@ class DefaultController extends AbstractController
                 'win' => $chart_totals['win'],
                 'loss' => $chart_totals['loss'],
                 'draw' => $chart_totals['draw'],
+                'score' => $chart_totals['score'],
             ),
             'chart_last' => array(
                 'win' => $chart_last['win'],
                 'loss' => $chart_last['loss'],
                 'draw' => $chart_last['draw'],
+                'score' => $chart_last['score'],
             ),
             'last_seen' => $last_seen,
             'last_episodes' => $last_episodes,

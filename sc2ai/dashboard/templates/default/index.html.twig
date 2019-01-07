@@ -3,7 +3,8 @@
 {% block title %}Hello {{ controller_name }}!{% endblock %}
 
 {% block body %}
-    <div class="container">
+
+    <div class="container-fluid">
         <br>
         <h2>SC2 - AI Custom Agent</h2>
         <h4>
@@ -12,7 +13,7 @@
         </h4>
         <br>
         <div class="row">
-            <div class="col-md-8">
+            <div class="col-md-9">
                 <div class="row">
                     <div class="col-md-12">
                         <h3>Total {{ episodes }} Episodes</h3>
@@ -20,6 +21,8 @@
                 </div>
                 <div class="row stats_panel" id="totals">
                     <div class="col-md-6">
+                        <br />
+                        <br />
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="card rounded">
@@ -59,8 +62,11 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-3" style="border-left: 1px solid #ccc;">
                         <div id="chart_total"></div>
+                    </div>
+                    <div class="col-md-3" style="border-left: 1px solid #ccc;">
+                        <div id="chart_avg_total"></div>
                     </div>
                 </div>
                 <br/>
@@ -73,6 +79,8 @@
                 </div>
                 <div class="row stats_panel" id="lasts">
                     <div class="col-md-6">
+                        <br />
+                        <br />
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="card rounded">
@@ -112,12 +120,15 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-3" style="border-left: 1px solid #ccc;">
                         <div id="chart_last"></div>
+                    </div>
+                    <div class="col-md-3" style="border-left: 1px solid #ccc;">
+                        <div id="chart_avg_last"></div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3" style="border-left:1px solid #ccc;">
                 <h3>Last 25 Games</h3>
                 <div class="row">
                     <div class="col-md-12">
@@ -225,6 +236,81 @@
                         name: 'Draw',
                         data: [{{ chart_last.draw }}]
                     },
+                ],
+                responsive: {
+                    rules: [{
+                        condition: {
+                            maxWidth: 500
+                        },
+                        chartOptions: {
+                            legend: {
+                                layout: 'horizontal',
+                                align: 'center',
+                                verticalAlign: 'bottom'
+                            }
+                        }
+                    }]
+                }
+            });
+
+            Highcharts.chart('chart_avg_total', {
+                chart: {
+                    height: 200,
+                    type: 'spline'
+                },
+                title: false,
+
+                subtitle: false,
+                yAxis: [
+                    {
+                        title: {
+                            text: 'Avg. Score'
+                        }
+                    }
+                ],
+                series: [
+                    {
+                        name: 'Avg. Score',
+                        data: [{{ chart_total.score }}]
+                    }
+                ],
+                responsive: {
+                    rules: [{
+                        condition: {
+                            maxWidth: 500
+                        },
+                        chartOptions: {
+                            legend: {
+                                layout: 'horizontal',
+                                align: 'center',
+                                verticalAlign: 'bottom'
+                            }
+                        }
+                    }]
+                }
+
+            });
+
+            Highcharts.chart('chart_avg_last', {
+                chart: {
+                    height: 200,
+                    type: 'spline'
+                },
+                title: false,
+
+                subtitle: false,
+                yAxis: [
+                    {
+                        title: {
+                            text: 'Avg. Score'
+                        }
+                    }
+                ],
+                series: [
+                    {
+                        name: 'Avg. Score',
+                        data: [{{ chart_last.score }}]
+                    }
                 ],
                 responsive: {
                     rules: [{

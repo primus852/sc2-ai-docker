@@ -112,10 +112,11 @@ class Dashboard
     }
 
     /**
-     * @param int $limit
+     * @param int|null $limit
+     * @param string $sort
      * @return array
      */
-    public function get_charts(?int $limit = 0)
+    public function get_charts(?int $limit = 0, $sort = 'ASC')
     {
 
         /**
@@ -125,7 +126,7 @@ class Dashboard
         $criteria
             ->where(Criteria::expr()->gt('id', 0))
             ->orderBy(array(
-                'created' => 'DESC'
+                'created' => $sort,
             ));
 
         /**
@@ -143,9 +144,11 @@ class Dashboard
         $win_str = null;
         $loss_str = null;
         $draw_str = null;
+        $score_str = null;
         $win = 0;
         $loss = 0;
         $draw = 0;
+        $cumul_score = 0;
         $total = 0;
 
         /* @var $stat Stats */
@@ -165,9 +168,12 @@ class Dashboard
                 $draw++;
             }
 
+            $cumul_score += $stat->getGameScore();
+
             $win_str .= round($win * 100 / $total, 0) . ',';
             $loss_str .= round($loss * 100 / $total, 0) . ',';
             $draw_str .= round($draw * 100 / $total, 0) . ',';
+            $score_str .= round($cumul_score / $total, 0) . ',';
 
         }
 
@@ -175,6 +181,7 @@ class Dashboard
             'win' => substr($win_str, 0, -1),
             'loss' => substr($loss_str, 0, -1),
             'draw' => substr($draw_str, 0, -1),
+            'score' => substr($score_str, 0, -1),
         );
 
     }
