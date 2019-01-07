@@ -116,7 +116,7 @@ class Dashboard
      * @param string $sort
      * @return array
      */
-    public function get_charts(?int $limit = 0, $sort = 'ASC')
+    public function get_charts(?int $limit = 0, $sort = 'DESC')
     {
 
         /**
@@ -150,6 +150,16 @@ class Dashboard
         $draw = 0;
         $cumul_score = 0;
         $total = 0;
+
+        /**
+         * We need to reverse the Result
+         */
+        $stats_arr = array();
+        foreach($stats as $stat){
+            $stats_arr[] = $stat;
+        }
+
+        $stats = array_reverse($stats_arr);
 
         /* @var $stat Stats */
         foreach ($stats as $stat) {
@@ -221,6 +231,16 @@ class Dashboard
         }
 
         $stats = $this->em->getRepository(Stats::class)->matching($criteria);
+
+        /**
+         * We need to reverse the Result
+         */
+        $stats_arr = array();
+        foreach($stats as $stat){
+            $stats_arr[] = $stat;
+        }
+
+        $stats = array_reverse($stats_arr);
 
         /* @var $stat \App\Entity\Stats */
         foreach ($stats as $stat) {
