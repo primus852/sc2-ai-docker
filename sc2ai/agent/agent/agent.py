@@ -125,6 +125,18 @@ class DeepAgent(base_agent.BaseAgent):
             os.chmod(os.path.join(DATA_FOLDER, DATA_FILE), 0o755)
             self.qlearn.q_table = pd.read_pickle(os.path.join(DATA_FOLDER, DATA_FILE), compression='gzip')
 
+    def transform_distance(self, x, x_distance, y, y_distance):
+        if not self.base_top_left:
+            return [x - x_distance, y - y_distance]
+
+        return [x + x_distance, y + y_distance]
+
+    def transform_location(self, x, y):
+        if not self.base_top_left:
+            return [64 - x, 64 - y]
+
+        return [x, y]
+
     @staticmethod
     def split_action(action_id):
         smart_action = SMART_ACTIONS[action_id]
@@ -279,11 +291,11 @@ class DeepAgent(base_agent.BaseAgent):
                     if self.cc_y.any():
                         target = None
                         if supply_depot_count == 0:
-                            target = helpers.transform_distance(self, round(self.cc_x.mean()), -35,
-                                                                round(self.cc_y.mean()), 0)
+                            target = self.transform_distance(round(self.cc_x.mean()), -35,
+                                                             round(self.cc_y.mean()), 0)
                         elif supply_depot_count == 1:
-                            target = helpers.transform_distance(self, round(self.cc_x.mean()), -25,
-                                                                round(self.cc_y.mean()), -25)
+                            target = self.transform_distance(round(self.cc_x.mean()), -25,
+                                                             round(self.cc_y.mean()), -25)
 
                         return actions.FunctionCall(_BUILD_SUPPLY_DEPOT, [_NOT_QUEUED, target])
 

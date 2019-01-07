@@ -1,3 +1,4 @@
+"""
 def transform_distance(self, x, x_distance, y, y_distance):
     if not self.base_top_left:
         return [x - x_distance, y - y_distance]
@@ -10,3 +11,4 @@ def transform_location(self, x, y):
         return [64 - x, 64 - y]
 
     return [x, y]
+"""
