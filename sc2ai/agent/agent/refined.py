@@ -61,7 +61,7 @@ smart_actions = [
 ]
 
 # SQLAlchemy Connection
-engine = create_engine('mysql+pymysql://admin:ABcd1234@mysql/sc2_stats')
+engine = create_engine('mysql+pymysql://root:ABcd1234@localhost/sc2_stats')
 Base = declarative_base()
 
 # Create Database if it does not exist
