@@ -29,7 +29,6 @@ RUN apt-get update && apt-get install -yq \
     # Install tools
 	mysql-client \
     nano \
-    cron \
     htop \
     wget \
     unzip \
@@ -79,3 +78,7 @@ WORKDIR /sc2ai
 
 # Run Apache
 CMD apachectl -D FOREGROUND
+
+# Start the Agent
+# RUN chmod +x agent.sh
+# ENTRYPOINT ["/bin/bash", "./agent.sh"]
