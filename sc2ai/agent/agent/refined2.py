@@ -199,6 +199,20 @@ class SparseAgent(base_agent.BaseAgent):
         return [unit for unit in obs.observation.feature_units
                 if unit.unit_type == unit_type]
 
+    def unit_type_is_selected(self, obs, unit_type):
+        if (len(obs.observation.single_select) > 0 and
+                obs.observation.single_select[0].unit_type == unit_type):
+            return True
+
+        if (len(obs.observation.multi_select) > 0 and
+                obs.observation.multi_select[0].unit_type == unit_type):
+            return True
+
+        return False
+
+    def can_do(self, obs, action):
+        return action in obs.observation.available_actions
+
     def step(self, obs):
         super(SparseAgent, self).step(obs)
 
@@ -236,19 +250,20 @@ class SparseAgent(base_agent.BaseAgent):
             self.base_top_left = 1 if player_y.any() and player_y.mean() <= 31 else 0
 
             """ Assign the Command Center Coords for building the other buildings around it"""
-            self.cc_y, self.cc_x = self.get_units_by_type(obs, units.Terran.CommandCenter)
+            self.cc_x = player_x.mean()
+            self.cc_y = player_y.mean()
 
         """ Check if we have a CommandCenter """
-        cc_y, cc_x = self.get_units_by_type(obs, units.Terran.CommandCenter)
-        cc_count = 1 if cc_y.any() else 0
+        command_centers = self.get_units_by_type(obs, units.Terran.CommandCenter)
+        cc_count = len(command_centers)
 
         """ Count the Supply Depots """
-        depot_y, depot_x = self.get_units_by_type(obs, units.Terran.SupplyDepot)
-        supply_depot_count = int(round(len(depot_y) / 69))
+        supply_depots = self.get_units_by_type(obs, units.Terran.SupplyDepot)
+        supply_depot_count = len(supply_depots)
 
         """ Count the Barracks """
-        barracks_y, barracks_x = self.get_units_by_type(obs, units.Terran.Barracks)
-        barracks_count = int(round(len(barracks_y) / 137))
+        barracks = self.get_units_by_type(obs, units.Terran.Barracks)
+        barracks_count = len(barracks)
 
         """ Get the available supply """
         supply_free = (obs.observation.player.food_cap - obs.observation.player.food_used)
@@ -346,20 +361,16 @@ class SparseAgent(base_agent.BaseAgent):
 
             if smart_action == ACTION_BUILD_BARRACKS or smart_action == ACTION_BUILD_SUPPLY_DEPOT:
                 """ BUILD_BARRACKS or BUILD_SUPPLY_DEPOT - MOVE 1: Select SCV """
-                unit_y, unit_x = self.get_units_by_type(obs, units.Terran.SCV)
+                scvs = self.get_units_by_type(obs, units.Terran.SCV)
 
-                if unit_y.any():
-                    i = random.randint(0, len(unit_y) - 1)
-                    target = [unit_x[i], unit_y[i]]
-
-                    return actions.FunctionCall(_SELECT_POINT, [_NOT_QUEUED, target])
+                if len(scvs) > 0:
+                    scv = random.choice(scvs)
+                    return actions.FUNCTIONS.select_unit(scv)
 
             elif smart_action == ACTION_BUILD_MARINE:
                 """ BUILD MARINE - MOVE 1: Select Barracks """
-                if barracks_y.any():
-                    i = random.randint(0, len(barracks_y) - 1)
-                    target = [barracks_x[i], barracks_y[i]]
-
+                if barracks_count > 0:
+                    return actions.FUNCTIONS.select_point("select_all_type", barracks)
                     return actions.FunctionCall(_SELECT_POINT, [_SELECT_ALL, target])
 
             elif smart_action == ACTION_ATTACK:
@@ -444,4 +455,4 @@ class SparseAgent(base_agent.BaseAgent):
 
                         return actions.FunctionCall(_HARVEST_GATHER, [_QUEUED, target])
 
-        return actions.FunctionCall(_NO_OP, [])
+        return actions.FUNCTIONS.no_op()
