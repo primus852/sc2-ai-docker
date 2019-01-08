@@ -45,7 +45,7 @@ _NOT_QUEUED = [0]
 _QUEUED = [1]
 _SELECT_ALL = [2]
 
-DATA_FILE = 'refined_agent_data'
+DATA_FILE = 'refined_agent_data_2'
 
 ACTION_DO_NOTHING = 'donothing'
 ACTION_BUILD_SUPPLY_DEPOT = 'buildsupplydepot'
@@ -61,7 +61,7 @@ smart_actions = [
 ]
 
 # SQLAlchemy Connection
-engine = create_engine('mysql+pymysql://admin:ABcd1234@mysql/sc2_stats')
+engine = create_engine('mysql+pymysql://root:ABcd1234@localhost/sc2_stats')
 Base = declarative_base()
 
 # Create Database if it does not exist
@@ -71,7 +71,7 @@ if not database_exists(engine.url):
 
 # Create the Table if it does not exist
 class Stats(Base):
-    __tablename__ = 'stats'
+    __tablename__ = 'stats_2'
     id = Column(Integer, primary_key=True)
     created = Column(DateTime, nullable=False)
     outcome = Column(Integer, nullable=False)
