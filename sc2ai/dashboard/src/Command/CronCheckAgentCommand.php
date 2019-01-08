@@ -73,7 +73,7 @@ class CronCheckAgentCommand extends Command
 
             $process = Process::fromShellCommandline(
                 'python3 -m pysc2.bin.agent  --map Simple64  --agent agent.refined.SparseAgent  --agent_race terran  --max_agent_steps 0 --norender',
-                '/sc2ai/agent'
+                '/var/www/html/sc2-ai-docker/sc2ai/agent'
             );
 
             try {
