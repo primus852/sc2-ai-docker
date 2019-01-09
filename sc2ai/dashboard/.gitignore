@@ -10,3 +10,4 @@
 .idea
 /public/node_modules/
 .env
+/src/Command/CronCheckAgentCommand.php.lock

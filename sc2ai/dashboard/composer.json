@@ -4,7 +4,9 @@
     "require": {
         "php": "^7.1.3",
         "ext-ctype": "*",
+        "ext-curl": "*",
         "ext-iconv": "*",
+        "primus852/symfony-short-response": "dev-master",
         "sensio/framework-extra-bundle": "^5.2",
         "symfony/asset": "4.2.*",
         "symfony/console": "4.2.*",

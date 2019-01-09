@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Stats;
 use App\Util\Dashboard\Dashboard;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -30,6 +31,11 @@ class DefaultController extends AbstractController
         }catch (\Exception $e){
             throw new NotFoundHttpException($e->getMessage());
         }
+
+        # $fs = new Filesystem();
+        # $lockFile = $this->get('kernel')->getProjectDir().'/src/Command/CronCheckAgentCommand.php.lock';
+
+        # $hasLock = $fs->exists($lockFile) ? true : false;
 
         return $this->render('default/index.html.twig', array(
             'controller_name' => 'Stats',
@@ -58,6 +64,7 @@ class DefaultController extends AbstractController
             'last_seen' => $last_seen,
             'last_episodes' => $last_episodes,
             'episodes' => $dashboard->total_episodes(),
+            # 'locked' => $hasLock,
         ));
     }
 }
