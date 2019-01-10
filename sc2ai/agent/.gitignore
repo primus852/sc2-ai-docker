@@ -163,3 +163,4 @@ venv.bak/
 /data/q_table.gz
 /data/visualize.gz
 /data/stats.gz
+/dashboard/.env.dist
