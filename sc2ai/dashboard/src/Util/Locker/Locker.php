@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Util\Locker;
 
 
@@ -13,10 +14,11 @@ class Locker
     /**
      * @param string $file
      * @param bool $force
+     * @param bool $allow_reset
      * @return bool
      * @throws LockerException
      */
-    public static function check_lock(string $file, bool $force)
+    public static function check_lock(string $file, bool $force, bool $allow_reset = false)
     {
 
         $fs = new Filesystem();
@@ -24,19 +26,21 @@ class Locker
             if ($fs->exists($file . '.lock')) {
 
                 $last_update = \DateTime::createFromFormat('Y-m-d H:i:s', date("Y-m-d H:i:s", filemtime($file . '.lock')));
-                try{
-                $now = new \DateTime();
-                }catch(\Exception $e){
+                try {
+                    $now = new \DateTime();
+                } catch (\Exception $e) {
                     throw new LockerException('Invalid Datetime');
                 }
                 $age = $now->diff($last_update);
 
-                /**
-                 * If the LockFile is old, sth might have happened, delete it
-                 */
-                if (self::in_minutes($age) > self::MAX_AGE) {
-                    $fs->remove($file . self::EXT);
-                    return false;
+                if ($allow_reset) {
+                    /**
+                     * If the LockFile is old, sth might have happened, delete it
+                     */
+                    if (self::in_minutes($age) > self::MAX_AGE) {
+                        $fs->remove($file . self::EXT);
+                        return false;
+                    }
                 }
                 return true;
             }
