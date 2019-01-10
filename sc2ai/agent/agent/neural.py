@@ -12,6 +12,7 @@ class NeuralBot(sc2.BotAI):
         await self.build_workers()
         await self.build_pylons()
         await self.build_assimilators()
+        await self.expand()
 
     async def build_workers(self):
         for nexus in self.units(NEXUS).ready.noqueue:
@@ -27,7 +28,7 @@ class NeuralBot(sc2.BotAI):
 
     async def build_assimilators(self):
         for nexus in self.units(NEXUS).ready:
-            vaspenes = self.state.vespene_geyser.closer_than(25, nexus)
+            vaspenes = self.state.vespene_geyser.closer_than(10, nexus)
             for vaspene in vaspenes:
                 if not self.can_afford(ASSIMILATOR):
                     break
@@ -36,6 +37,10 @@ class NeuralBot(sc2.BotAI):
                     break
                 if not self.units(ASSIMILATOR).closer_than(1, vaspene).exists:
                     await self.do(worker.build(ASSIMILATOR, vaspene))
+
+    async def expand(self):
+        if self.units(NEXUS).amount < 3 and self.can_afford(NEXUS):
+            await self.expand_now()
 
 
 run_game(maps.get("AbyssalReefLE"), [
