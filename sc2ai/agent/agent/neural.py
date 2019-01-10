@@ -13,8 +13,8 @@ class NeuralBot(sc2.BotAI):
         await self.build_pylons()
         await self.build_assimilators()
         await self.expand()
-        await self.offensive_force_buildings()
-        await self.offensive_force_force()
+        await self.build_offensive_force_buildings()
+        await self.build_offensive_force()
 
     async def build_workers(self):
         for nexus in self.units(NEXUS).ready.noqueue:
@@ -44,7 +44,7 @@ class NeuralBot(sc2.BotAI):
         if self.units(NEXUS).amount < 3 and self.can_afford(NEXUS):
             await self.expand_now()
 
-    async def offensive_force_buildings(self):
+    async def build_offensive_force_buildings(self):
         """ Find a pylon """
         if self.units(PYLON).ready.exists:
             pylon = self.units(PYLON).ready.random
