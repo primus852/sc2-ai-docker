@@ -9,7 +9,7 @@ class NeuralBot(sc2.BotAI):
         await self.distribute_workers()
 
 
-run_game(maps.get("AbyssalReefLE"), [
+run_game(maps.get("/root/StarCraftII/Maps/AbyssalReefLE.SC2Map"), [
     Bot(Race.Protoss, NeuralBot()),
     Computer(Race.Terran, Difficulty.Easy)
 ], realtime=True)
