@@ -5,3 +5,4 @@ pysc2
 SQLAlchemy
 SQLAlchemy-Utils
 PyMySQLdb
+sc2
