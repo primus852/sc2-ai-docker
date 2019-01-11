@@ -25,6 +25,7 @@ setup(
         'PyMySQLdb',
         'keras',
         'tensorflow',
+        'multiprocessing'
         'SQLAlchemy',
         'SQLAlchemy-Utils'
     ]

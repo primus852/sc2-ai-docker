@@ -8,3 +8,4 @@ PyMySQLdb
 sc2
 keras
 tensorflow
+multiprocessing
