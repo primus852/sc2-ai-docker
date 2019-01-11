@@ -32,7 +32,7 @@ model.add(Flatten())
 model.add(Dense(512, activation='relu'))
 model.add(Dropout(0.5))
 
-model.add(Dense(4, activation='softmax'))
+model.add(Dense(14, activation='softmax'))
 
 learning_rate = 0.0001
 opt = keras.optimizers.adam(lr=learning_rate, decay=1e-6)
