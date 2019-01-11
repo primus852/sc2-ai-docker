@@ -53,7 +53,7 @@ class NeuralBot(sc2.BotAI):
         # print(game_result, self.use_model)
         # if self.minutes < 17:
         if game_result == Result.Victory:
-            np.save("train_data/{}.npy".format(str(int(time.time()))), np.array(self.train_data))
+            np.savez_compressed("data/{}.npz".format(str(int(time.time()))), np.array(self.train_data))
 
     async def on_step(self, iteration):
 
