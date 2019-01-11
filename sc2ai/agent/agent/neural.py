@@ -27,7 +27,7 @@ class NeuralBot(sc2.BotAI):
         if game_result == Result.Victory:
             np.save("data/{}.npy".format(str(int(time.time()))), np.array(self.train_data))
 
-    async def on_step(self, iteration: int):
+    async def on_step(self, iteration):
         self.iteration = iteration
         await self.scout()
         """ Wait for the workers to mine """
