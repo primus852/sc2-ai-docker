@@ -45,12 +45,12 @@ class NeuralBot(sc2.BotAI):
 
         self.train_data = []
         if self.use_model:
-            print("USING MODEL!")
+            # print("USING MODEL!")
             self.model = keras.models.load_model("BasicCNN-30-epochs-0.0001-LR-4.2")
 
     def on_end(self, game_result):
-        print('--- on_end called ---')
-        print(game_result, self.use_model)
+        # print('--- on_end called ---')
+        # print(game_result, self.use_model)
         # if self.minutes < 17:
         if game_result == Result.Victory:
             np.save("train_data/{}.npy".format(str(int(time.time()))), np.array(self.train_data))
@@ -58,7 +58,7 @@ class NeuralBot(sc2.BotAI):
     async def on_step(self, iteration):
 
         self.minutes = (self.state.game_loop / 22.4) / 60
-        print('Time:', self.minutes)
+        # print('Time:', self.minutes)
 
         if iteration % 5 == 0:
             await self.distribute_workers()
@@ -75,16 +75,16 @@ class NeuralBot(sc2.BotAI):
         y += random.randrange(-5, 5)
 
         if x < 0:
-            print("x below")
+            # print("x below")
             x = 0
         if y < 0:
-            print("y below")
+            # print("y below")
             y = 0
         if x > self.game_info.map_size[0]:
-            print("x above")
+            # print("x above")
             x = self.game_info.map_size[0]
         if y > self.game_info.map_size[1]:
-            print("y above")
+            # print("y above")
             y = self.game_info.map_size[1]
 
         go_to = position.Point2(position.Pointlike((x, y)))
@@ -96,7 +96,7 @@ class NeuralBot(sc2.BotAI):
 
         for el in self.expansion_locations:
             distance_to_enemy_start = el.distance_to(self.enemy_start_locations[0])
-            # print(distance_to_enemy_start)
+            # # print(distance_to_enemy_start)
             self.expand_dis_dir[distance_to_enemy_start] = el
 
         self.ordered_exp_distances = sorted(k for k in self.expand_dis_dir)
@@ -194,7 +194,7 @@ class NeuralBot(sc2.BotAI):
             cv2.line(game_data, (0, 7), (int(line_max * vespene_ratio), 7), (210, 200, 0), 3)  # gas / 1500
             cv2.line(game_data, (0, 3), (int(line_max * mineral_ratio), 3), (0, 255, 25), 3)  # minerals minerals/1500
         except Exception as e:
-            print(str(e))
+            # print(str(e))
 
         # flip horizontally to make our final fix in visual representation:
         grayed = cv2.cvtColor(game_data, cv2.COLOR_BGR2GRAY)
@@ -220,7 +220,7 @@ class NeuralBot(sc2.BotAI):
 
     async def build_scout(self):
         for rf in self.units(ROBOTICSFACILITY).ready.noqueue:
-            print(len(self.units(OBSERVER)), self.minutes / 3)
+            # print(len(self.units(OBSERVER)), self.minutes / 3)
             if self.can_afford(OBSERVER) and self.supply_left > 0:
                 await self.do(rf.train(OBSERVER))
                 break
@@ -299,7 +299,8 @@ class NeuralBot(sc2.BotAI):
             if self.can_afford(NEXUS) and len(self.units(NEXUS)) < 3:
                 await self.expand_now()
         except Exception as e:
-            print(str(e))
+            # print(str(e))
+            pass
 
     async def do_nothing(self):
         wait = random.randrange(7, 100) / 100
@@ -358,7 +359,8 @@ class NeuralBot(sc2.BotAI):
             try:
                 await self.choices[choice]()
             except Exception as e:
-                print(str(e))
+                # print(str(e))
+                pass
 
             y = np.zeros(14)
             y[choice] = 1
