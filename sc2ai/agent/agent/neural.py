@@ -258,7 +258,8 @@ class NeuralBot(sc2.BotAI):
                 self.train_data.append([y, self.flipped])
 
 
-run_game(maps.get("AbyssalReefLE"), [
-    Bot(Race.Protoss, NeuralBot()),
-    Computer(Race.Terran, Difficulty.Easy)
-], realtime=False)
+while True:
+    run_game(maps.get("AbyssalReefLE"), [
+        Bot(Race.Protoss, NeuralBot()),
+        Computer(Race.Terran, Difficulty.Easy)
+    ], realtime=False)
