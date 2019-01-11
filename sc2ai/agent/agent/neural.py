@@ -195,6 +195,7 @@ class NeuralBot(sc2.BotAI):
             cv2.line(game_data, (0, 3), (int(line_max * mineral_ratio), 3), (0, 255, 25), 3)  # minerals minerals/1500
         except Exception as e:
             # print(str(e))
+            pass
 
         # flip horizontally to make our final fix in visual representation:
         grayed = cv2.cvtColor(game_data, cv2.COLOR_BGR2GRAY)
