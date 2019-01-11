@@ -10,7 +10,7 @@ from sc2.player import Bot, Computer
 from sc2.constants import NEXUS, PROBE, PYLON, ASSIMILATOR, GATEWAY, CYBERNETICSCORE, STALKER, STARGATE, VOIDRAY, \
     OBSERVER, ROBOTICSFACILITY
 
-HEADLESS = False
+HEADLESS = True
 
 class NeuralBot(sc2.BotAI):
     def __init__(self):
