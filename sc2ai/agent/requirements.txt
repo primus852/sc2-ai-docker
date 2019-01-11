@@ -6,3 +6,4 @@ SQLAlchemy
 SQLAlchemy-Utils
 PyMySQLdb
 sc2
+cv2

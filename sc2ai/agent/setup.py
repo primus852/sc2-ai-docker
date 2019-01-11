@@ -22,6 +22,7 @@ setup(
         'numpy',
         'pysc2',
         'sc2',
+        'cv2',
         'PyMySQLdb',
         'SQLAlchemy',
         'SQLAlchemy-Utils'
