@@ -8,4 +8,3 @@ PyMySQLdb
 sc2
 keras
 tensorflow
-cv2
