@@ -6,6 +6,7 @@
         "ext-ctype": "*",
         "ext-curl": "*",
         "ext-iconv": "*",
+        "ext-json": "*",
         "primus852/symfony-short-response": "dev-master",
         "sensio/framework-extra-bundle": "^5.2",
         "symfony/asset": "4.2.*",

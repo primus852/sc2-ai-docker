@@ -103,7 +103,7 @@ class CronCheckAgentCommand extends Command
                  * Create Telegram
                  */
                 $telegram = new TelegramBot();
-                $telegram->send_update('Agent is down!');
+                $telegram->send_to_user('Agent is down!');
 
                 /**
                  * Create the Lockfile
