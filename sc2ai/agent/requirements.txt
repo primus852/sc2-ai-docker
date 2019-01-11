@@ -6,4 +6,6 @@ SQLAlchemy
 SQLAlchemy-Utils
 PyMySQLdb
 sc2
+keras
+tensorflow
 cv2
