@@ -24,7 +24,7 @@ setup(
         'sc2',
         'PyMySQLdb',
         'keras',
-        'tensorflow-gpu',
+        'tensorflow',
         'SQLAlchemy',
         'SQLAlchemy-Utils'
     ]
