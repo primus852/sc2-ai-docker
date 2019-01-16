@@ -7,4 +7,4 @@ SQLAlchemy-Utils
 PyMySQLdb
 sc2
 keras
-tensorflow
+tensorflow-gpu
