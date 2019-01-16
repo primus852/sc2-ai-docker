@@ -17,14 +17,15 @@ todo: Fill up this Readme
 10. Confirm Version `nvcc --version`
 11. `cd ~ && mkdir cudnn`
 12. `gsutil rsync gs://sc2-ai-cudnn ~/cudnn`
-13. `git clone https://github.com/primus852/sc2-ai-docker`
-14. `gsutil -m rsync gs://sc2-ai-data ~/sc2-ai-docker/sc2ai/agent/agent/data`
-15. `cd sc2-ai-docker/sc2ai/agent/agent && mkdir logs && cd ..`
-16. `pip3 install -r requirements.txt`
-17. `sudo python3 setup.py install`
-18. `screen -S train`
-19. `cd agent && python3 model.py`
-20. Detach `ctrl + a + d`
+13. `cd cudnn && sudo dpkg -i libcudnn7_7.4.2.24-1+cuda10.0_amd64.deb`
+14. `git clone https://github.com/primus852/sc2-ai-docker`
+15. `gsutil -m rsync gs://sc2-ai-data ~/sc2-ai-docker/sc2ai/agent/agent/data`
+16. `cd sc2-ai-docker/sc2ai/agent/agent && mkdir logs && cd ..`
+17. `pip3 install -r requirements.txt`
+18. `sudo python3 setup.py install`
+19. `screen -S train`
+20. `cd agent && python3 model.py`
+21. Detach `ctrl + a + d`
 
 
 
